@@ -1,3 +1,10 @@
+// Function to generate a random numeric value
+var randomNumber = function(min, max) {
+    var value = Math.floor(Math.random() * (max - min + 1) + min) + 40;
+
+    return value;
+};
+
 var fightOrSkip = function() {
     // Ask player if they'd like to fight or skip using fightOrSkip function
     var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? enter 'FIGHT' or 'SKIP' to choose.");
@@ -98,18 +105,22 @@ var startGame = function() {
     // Other logic remains the same . . .
 
     for(var i = 0; i < enemyInfo.length; i++) {
+        // Check player stats 
+        console.log(playerInfo);
+        
+        // If player is still alive, keep fighting
         if (playerInfo.health > 0) {
             // Let player know what round they are in, remember that arrays start at 0 so it needs to have 1 added to it
             window.alert("Welcome to Robot Gladiators! Round " + ( i + 1));
 
-            // Pick new enemy to fight based on the index of the enemyNames array
+            // Pick new enemy to fight based on the index of the enemyInfo array
             var pickedEnemyObj = enemyInfo[i];
 
             // Reset enemyHealth before starting new fight 
             pickedEnemyObj.health = randomNumber(40, 60);
 
-            // use debugger to pause script from running and check what's going on at that moment in the code
-            // debugger;
+            console.log(pickedEnemyObj);
+
             // Pass the pickedEnemyName variable's value into the fight function, where it will assume the value of the enemyName parameter
             fight(pickedEnemyObj);
 
@@ -138,11 +149,20 @@ var startGame = function() {
 var endGame = function () {
     window.alert("The game has now ended. Let's see how you did!");
 
-    // If player is still alive, player wins! 
-    if (playerInfo.health > 0) {
-        window.alert("Great job, you've survived the game! You now have a score of " + playerInfo.money + ".");    
+    // Check localStorage for high score, if it's not there, use 0
+    var highScore = localStorage.getItem("highscore");
+    if (highScore === null) {
+        highScore = 0;
+    }
+
+    // If player has more money than the high score, player has new high score!
+    if (playerInfo.money > highScore) {
+        localStorage.setItem("highscore", playerInfo.money);
+        localStorage.setItem("name", playerInfo.name);
+
+        alert(playerInfo.name + " now has the high score of " + playerInfo.money + "!");
     } else {
-        window.alert("You've lost your robot in battle.");
+        alert(playerInfo.name + " did not beat the high score of " + highScore + ". Maybe next time!");
     }
 
     // Ask player if they'd like to play again
@@ -156,8 +176,9 @@ var endGame = function () {
     }
 }; 
 
+// Go to shop between battles function
 var shop = function() {
-    // Ask player what they's like to do
+    // Ask player what they'd like to do
     var shopOptionPrompt = window.prompt(
         "Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter one 1 for REFILL, 2 for UPGRADE, or 3 for LEAVE."
     );
@@ -197,14 +218,10 @@ var getPlayerName = function() {
     }
 
     console.log("Your robot's name is " + name);
+    return name;
 };
-
-// Function to generate a random numeric value
-var randomNumber = function(min, max) {
-    var value = Math.floor(Math.random() * (max - min + 1) + min) + 40;
-
-    return value;
-}
+/* End game functions */
+/* Game information / variables */
 
 // Player info 
 var playerInfo = {
@@ -222,8 +239,7 @@ var playerInfo = {
             window.alert("Refilling player's health by 20 for 7 dollars.");
             this.health += 20;
             this.money -= 7;
-        }
-        else {
+        } else {
             window.alert("You don't have enough money!");
         }
     },
@@ -232,8 +248,7 @@ var playerInfo = {
             window.alert("Upgrading player's attack by 6 for 7 dollars.");
             this.attack += 6;
             this.money -= 7;
-    }
-    else {
+    } else {
         window.alert("You don't have enough money!");
     }
 }
@@ -254,5 +269,7 @@ var enemyInfo = [
     }
 ];
 
-// Start the game when the page loads
+/* End game information / variables */
+
+/* Run game */
 startGame();
